@@ -5,13 +5,21 @@ variable "subscription_ids" {
 }
 
 variable "github_repositories" {
-  description = "GitHub repositories (owner/name) allowed to authenticate via OIDC"
-  type        = list(string)
-  default     = ["nonorojo/nonorojo-azure-infrastructure"]
+  description = "GitHub repositories (owner/name) allowed to authenticate via OIDC, with their immutable owner and repository IDs"
+  type = map(object({
+    owner_id = string
+    repo_id  = string
+  }))
+  default = {
+    "nonorojo/nonorojo-azure-infrastructure" = {
+      owner_id = "337281692"
+      repo_id  = "1402966926"
+    }
+  }
 
   validation {
-    condition     = alltrue([for r in var.github_repositories : can(regex("^[^/]+/[^/]+$", r))])
-    error_message = "Each repository must be in owner/name format."
+    condition     = alltrue([for r in keys(var.github_repositories) : can(regex("^[^/]+/[^/]+$", r))])
+    error_message = "Each repository key must be in owner/name format."
   }
 }
 
