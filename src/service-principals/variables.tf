@@ -1,7 +1,7 @@
 variable "subscription_ids" {
   description = "Subscription IDs the GitHub Actions service principal can access"
   type        = list(string)
-  default     = []
+  default     = ["1776dd90-c1ae-4485-b414-554883c0fa13"]
 }
 
 variable "github_repositories" {
