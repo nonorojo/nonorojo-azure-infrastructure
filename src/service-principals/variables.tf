@@ -23,6 +23,12 @@ variable "github_repositories" {
   }
 }
 
+variable "state_storage_account_ids" {
+  description = "Resource IDs of Terraform state storage accounts the GitHub Actions service principal reads and writes via Azure AD"
+  type        = list(string)
+  default     = ["/subscriptions/1776dd90-c1ae-4485-b414-554883c0fa13/resourceGroups/rg-tfstate-dev/providers/Microsoft.Storage/storageAccounts/stdevnonorojotfstate"]
+}
+
 variable "github_branch" {
   description = "Branch allowed to authenticate via OIDC"
   type        = string

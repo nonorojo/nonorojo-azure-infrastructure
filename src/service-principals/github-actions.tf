@@ -27,6 +27,14 @@ resource "azurerm_role_assignment" "github_actions" {
   principal_id         = azuread_service_principal.github_actions.object_id
 }
 
+resource "azurerm_role_assignment" "github_actions_state_blob" {
+  for_each = toset(var.state_storage_account_ids)
+
+  scope                = each.value
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azuread_service_principal.github_actions.object_id
+}
+
 output "github_actions_client_id" {
   value = azuread_application.github_actions.client_id
 }
