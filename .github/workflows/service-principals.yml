@@ -1,0 +1,58 @@
+name: Terraform - Service Principals
+
+on:
+  pull_request:
+    paths:
+      - "src/service-principals/**"
+      - ".github/workflows/service-principals.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/service-principals/**"
+      - ".github/workflows/service-principals.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_USE_OIDC: "true"
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
+  ARM_USE_AZUREAD: "true"
+  ARM_USE_AZUREAD_AUTH: "true"
+
+defaults:
+  run:
+    working-directory: src/service-principals
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: |
+          terraform init -input=false \
+            -backend-config="resource_group_name=rg-tfstate-dev" \
+            -backend-config="storage_account_name=stdevnonorojotfstate" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=terraform.state.az.infra.serviceprincipals"
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -input=false
+
+      - name: Terraform apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -input=false -auto-approve
