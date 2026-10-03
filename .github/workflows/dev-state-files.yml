@@ -4,12 +4,12 @@ on:
   pull_request:
     paths:
       - "src/state-files/**"
-      - ".github/workflows/state-files.yml"
+      - ".github/workflows/dev-state-files.yml"
   push:
     branches: [main]
     paths:
       - "src/state-files/**"
-      - ".github/workflows/state-files.yml"
+      - ".github/workflows/dev-state-files.yml"
 
 permissions:
   id-token: write
@@ -17,7 +17,7 @@ permissions:
 
 env:
   ARM_USE_OIDC: "true"
-  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_ID: ${{ secrets.GH_ACTIONS_AZURE_CLIENT_ID }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
 
@@ -30,6 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.GH_ACTIONS_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
 
       - uses: hashicorp/setup-terraform@v3
 
