@@ -21,9 +21,9 @@ env:
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
   TFSTATE_RESOURCE_GROUP: rg-crnono-dev
-  TFSTATE_STORAGE_ACCOUNT: stcrnonorojotfstate
+  TFSTATE_STORAGE_ACCOUNT: stdevnonorojotfstate
   TFSTATE_CONTAINER: tfstate
-  TFSTATE_KEY: terraform.state.az.infra.statefiles
+  TFSTATE_KEY: terraform.state.az.container-registry.statefiles
 
 defaults:
   run:
