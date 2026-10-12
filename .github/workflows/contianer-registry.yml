@@ -1,0 +1,67 @@
+name: Terraform - Container Registry
+
+on:
+  pull_request:
+    paths:
+      - "src/container-registry/**"
+      - ".github/workflows/contianer-registry.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/container-registry/**"
+      - ".github/workflows/contianer-registry.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_USE_OIDC: "true"
+  ARM_CLIENT_ID: ${{ secrets.GH_ACTIONS_AZURE_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
+  TFSTATE_RESOURCE_GROUP: rg-crnono-dev
+  TFSTATE_STORAGE_ACCOUNT: stcrnonorojotfstate
+  TFSTATE_CONTAINER: tfstate
+  TFSTATE_KEY: terraform.state.az.infra.statefiles
+
+defaults:
+  run:
+    working-directory: src/container-registry
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.GH_ACTIONS_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      # The backend block is empty, so it is configured here.
+      - name: Terraform init
+        run: |
+          terraform init -input=false \
+            -backend-config="resource_group_name=$TFSTATE_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TFSTATE_STORAGE_ACCOUNT" \
+            -backend-config="container_name=$TFSTATE_CONTAINER" \
+            -backend-config="key=$TFSTATE_KEY"
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -input=false
+
+      - name: Terraform apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -input=false -auto-approve

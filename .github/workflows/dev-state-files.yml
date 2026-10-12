@@ -20,6 +20,10 @@ env:
   ARM_CLIENT_ID: ${{ secrets.GH_ACTIONS_AZURE_CLIENT_ID }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
+  TFSTATE_RESOURCE_GROUP: rg-tfstate-dev
+  TFSTATE_STORAGE_ACCOUNT: stdevnonorojotfstate
+  TFSTATE_CONTAINER: tfstate
+  TFSTATE_KEY: terraform.state.az.infra.statefiles
 
 defaults:
   run:
@@ -46,10 +50,10 @@ jobs:
       - name: Terraform init
         run: |
           terraform init -input=false \
-            -backend-config="resource_group_name=rg-tfstate-dev" \
-            -backend-config="storage_account_name=stdevnonorojotfstate" \
-            -backend-config="container_name=tfstate" \
-            -backend-config="key=terraform.state.az.infra.statefiles"
+            -backend-config="resource_group_name=$TFSTATE_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TFSTATE_STORAGE_ACCOUNT" \
+            -backend-config="container_name=$TFSTATE_CONTAINER" \
+            -backend-config="key=$TFSTATE_KEY"
 
       - name: Terraform validate
         run: terraform validate
