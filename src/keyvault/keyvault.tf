@@ -5,11 +5,6 @@ data "azurerm_container_registry" "main" {
   resource_group_name = var.container_registry_resource_group_name
 }
 
-resource "azurerm_resource_group" "keyvault" {
-  name     = "rg-${var.project_name}"
-  location = var.location
-}
-
 resource "azurerm_key_vault" "main" {
   name                       = var.project_name
   resource_group_name        = azurerm_resource_group.keyvault.name
