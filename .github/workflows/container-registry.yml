@@ -4,12 +4,12 @@ on:
   pull_request:
     paths:
       - "src/container-registry/**"
-      - ".github/workflows/dev-container-registry.yml"
+      - ".github/workflows/container-registry.yml"
   push:
     branches: [main]
     paths:
       - "src/container-registry/**"
-      - ".github/workflows/dev-container-registry.yml"
+      - ".github/workflows/container-registry.yml"
 
 permissions:
   id-token: write
