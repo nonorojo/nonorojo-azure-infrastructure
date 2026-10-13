@@ -1,5 +1,5 @@
 resource "azurerm_container_registry" "main" {
-  name                = "acr${var.project_name}${var.environment}"
+  name                = "${var.project_name}"
   resource_group_name = azurerm_resource_group.tfstate.name
   location            = azurerm_resource_group.tfstate.location
   sku                 = "Basic"
