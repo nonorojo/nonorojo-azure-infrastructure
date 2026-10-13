@@ -4,12 +4,12 @@ on:
   pull_request:
     paths:
       - "src/service-principals/**"
-      - ".github/workflows/service-principals.yml"
+      - ".github/workflows/dev-service-principals.yml"
   push:
     branches: [main]
     paths:
       - "src/service-principals/**"
-      - ".github/workflows/service-principals.yml"
+      - ".github/workflows/dev-service-principals.yml"
 
 permissions:
   id-token: write
