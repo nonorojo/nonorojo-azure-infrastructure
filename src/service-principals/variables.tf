@@ -14,6 +14,10 @@ variable "github_repositories" {
     "nonorojo/nonorojo-azure-infrastructure" = {
       owner_id = "337281692"
       repo_id  = "1402966926"
+    },
+    "nonorojo/wasatch_custom_basements_website" = { 
+      owner_id = "337281692"
+      repo_id  = "1403328834"
     }
   }
 
